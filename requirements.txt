@@ -1,6 +1,11 @@
-streamlit
-gtts
+streamlit as st
+base64
+os
+gtts import gTTS
+PIL import Image
+cv2
 pytesseract
-Pillow
-opencv-python
 easyocr
+threading
+httpx
+google.generativeai as genai
