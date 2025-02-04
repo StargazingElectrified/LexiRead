@@ -1,0 +1,6 @@
+streamlit
+gtts
+pytesseract
+Pillow
+opencv-python
+easyocr
