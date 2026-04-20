@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LexiRead</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600&display=swap');
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --bg: #f5f3ff;
+  --surface: #ffffff;
+  --surface2: #ede9fe;
+  --text: #1e1b4b;
+  --text2: #5b5b8a;
+  --border: #d1cfe8;
+  --accent: #6d28d9;
+  --accent-light: #ede9fe;
+  --accent-text: #5b21b6;
+  --success-bg: #ecfdf5;
+  --success-text: #065f46;
+  --error-bg: #fef2f2;
+  --error-text: #991b1b;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --font-normal: system-ui, sans-serif;
+  --font-dyslexic: 'Lexend', sans-serif;
+}
+
+body {
+  font-family: var(--font-normal);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+.app {
+  max-width: 740px;
+  margin: 0 auto;
+  padding: 2rem 1.25rem;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 1.75rem;
+}
+
+.header h1 {
+  font-size: 2.4rem;
+  font-weight: 600;
+  color: var(--accent);
+  margin-bottom: 0.3rem;
+}
+
+.header p {
+  font-size: 15px;
+  color: var(--text2);
+}
+
+.toolbar {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 0.75rem 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.toolbar label {
+  font-size: 13px;
+  color: var(--text2);
+}
+
+.toolbar select {
+  font-family: inherit;
+  font-size: 13px;
+  padding: 4px 8px;
+  border-radius: var(--radius-md);
+  border: 0.5px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.toolbar input[type=range] {
+  width: 80px;
+  cursor: pointer;
+}
+
+.size-label {
+  font-size: 13px;
+  color: var(--text2);
+  min-width: 32px;
+}
+
+.font-toggle {
+  padding: 5px 12px;
+  font-size: 13px;
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius-md);
+  background: transparent;
+  cursor: pointer;
+  color: var(--text);
+  font-family: inherit;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.font-toggle.on {
+  background: var(--accent-light);
+  border-color: var(--accent);
+  color: var(--accent-text);
+}
+
+.nav {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  border-bottom: 0.5px solid var(--border);
+  padding-bottom: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.nav button {
+  padding: 6px 16px;
+  border-radius: var(--radius-md);
+  border: 0.5px solid var(--border);
+  background: transparent;
+  font-size: 14px;
+  cursor: pointer;
+  color: var(--text);
+  font-family: inherit;
+  transition: background 0.15s;
+}
+
+.nav button.active {
+  background: var(--accent-light);
+  border-color: var(--accent);
+  color: var(--accent-text);
+  font-weight: 500;
+}
+
+.nav button:hover:not(.active) {
+  background: var(--surface2);
+}
+
+.section { display: none; }
+.section.active { display: block; }
+
+.card {
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.badge {
+  display: inline-block;
+  font-size: 12px;
+  padding: 3px 10px;
+  border-radius: 99px;
+  background: var(--success-bg);
+  color: var(--success-text);
+  margin-bottom: 0.75rem;
+}
+
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+  margin-top: 0.75rem;
+}
+
+.feature-card {
+  background: var(--surface2);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text2);
+}
+
+.feature-card strong {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.feature-tabs {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.feature-tabs button {
+  padding: 5px 14px;
+  border-radius: var(--radius-md);
+  border: 0.5px solid var(--border);
+  background: transparent;
+  font-size: 13px;
+  cursor: pointer;
+  color: var(--text);
+  font-family: inherit;
+  transition: background 0.15s;
+}
+
+.feature-tabs button.active {
+  background: var(--accent-light);
+  border-color: var(--accent);
+  color: var(--accent-text);
+  font-weight: 500;
+}
+
+textarea {
+  width: 100%;
+  min-height: 120px;
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+  font-size: 15px;
+  line-height: 1.7;
+  resize: vertical;
+  background: var(--surface);
+  color: var(--text);
+  font-family: inherit;
+}
+
+textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.action-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 0.75rem;
+}
+
+.btn {
+  padding: 7px 16px;
+  border-radius: var(--radius-md);
+  border: 0.5px solid var(--border);
+  background: transparent;
+  font-size: 14px;
+  cursor: pointer;
+  color: var(--text);
+  font-family: inherit;
+  transition: background 0.15s;
+}
+
+.btn:hover { background: var(--surface2); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btn.primary {
+  background: var(--accent-light);
+  border-color: var(--accent);
+  color: var(--accent-text);
+  font-weight: 500;
+}
+
+.btn.primary:hover { background: #ddd6fe; }
+
+.lang-select {
+  font-family: inherit;
+  font-size: 13px;
+  padding: 6px 8px;
+  border-radius: var(--radius-md);
+  border: 0.5px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.tts-player {
+  display: none;
+  align-items: center;
+  gap: 12px;
+  background: var(--surface2);
+  border-radius: var(--radius-md);
+  padding: 0.75rem 1rem;
+  margin-top: 0.75rem;
+}
+
+.tts-label { font-size: 13px; color: var(--text2); }
+
+.waveform {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  flex: 1;
+}
+
+.wave-bar {
+  width: 3px;
+  border-radius: 2px;
+  background: var(--accent);
+  animation: wavePulse 0.8s ease-in-out infinite;
+}
+
+.wave-bar:nth-child(2) { animation-delay: 0.1s; }
+.wave-bar:nth-child(3) { animation-delay: 0.2s; }
+.wave-bar:nth-child(4) { animation-delay: 0.3s; }
+.wave-bar:nth-child(5) { animation-delay: 0.15s; }
+
+@keyframes wavePulse {
+  0%, 100% { height: 5px; }
+  50% { height: 20px; }
+}
+
+/* ── OCR section ── */
+
+.upload-area {
+  border: 1.5px dashed var(--border);
+  border-radius: var(--radius-md);
+  padding: 2rem;
+  text-align: center;
+  cursor: pointer;
+  color: var(--text2);
+  font-size: 14px;
+  line-height: 1.8;
+  transition: background 0.15s, border-color 0.15s;
+  position: relative;
+}
+
+.upload-area:hover { background: var(--surface2); }
+
+.upload-area.dragover {
+  background: var(--surface2);
+  border-color: var(--accent);
+}
+
+.upload-icon { font-size: 2rem; display: block; margin-bottom: 0.5rem; }
+
+.img-preview {
+  max-width: 100%;
+  border-radius: var(--radius-md);
+  margin-top: 0.75rem;
+  display: none;
+  border: 0.5px solid var(--border);
+}
+
+/* Status indicator */
+.ocr-status {
+  display: none;
+  align-items: center;
+  gap: 10px;
+  margin-top: 0.75rem;
+  padding: 0.65rem 1rem;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+}
+
+.ocr-status.loading {
+  display: flex;
+  background: var(--surface2);
+  color: var(--text2);
+}
+
+.ocr-status.success {
+  display: flex;
+  background: var(--success-bg);
+  color: var(--success-text);
+}
+
+.ocr-status.error {
+  display: flex;
+  background: var(--error-bg);
+  color: var(--error-text);
+}
+
+.spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--border);
+  border-top-color: var(--accent);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.method-pill {
+  display: inline-block;
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 99px;
+  background: var(--accent-light);
+  color: var(--accent-text);
+  margin-left: 4px;
+  font-weight: 500;
+}
+
+.output-box {
+  background: var(--surface2);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  font-size: 15px;
+  line-height: 1.8;
+  color: var(--text);
+  margin-top: 0.75rem;
+  display: none;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.output-label {
+  font-size: 12px;
+  color: var(--text2);
+  margin-top: 0.75rem;
+  margin-bottom: 4px;
+  display: none;
+}
+
+/* FAQ */
+.faq-item {
+  border-bottom: 0.5px solid var(--border);
+  padding: 0.8rem 0;
+}
+
+.faq-item:last-child { border-bottom: none; }
+
+.faq-q {
+  font-weight: 500;
+  font-size: 15px;
+  cursor: pointer;
+  color: var(--text);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  user-select: none;
+}
+
+.faq-arrow {
+  font-size: 11px;
+  color: var(--text2);
+  transition: transform 0.2s;
+}
+
+.faq-item.open .faq-arrow { transform: rotate(90deg); }
+
+.faq-a {
+  font-size: 14px;
+  color: var(--text2);
+  margin-top: 0.5rem;
+  line-height: 1.7;
+  display: none;
+}
+
+.faq-item.open .faq-a { display: block; }
+
+/* Contact */
+.contact-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0.75rem 0;
+  border-bottom: 0.5px solid var(--border);
+}
+
+.contact-row:last-child { border-bottom: none; }
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--accent-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--accent-text);
+  flex-shrink: 0;
+}
+
+.contact-name { font-size: 14px; font-weight: 500; color: var(--text); }
+.contact-email { font-size: 13px; color: var(--text2); }
+
+.footer {
+  text-align: center;
+  margin-top: 2rem;
+  padding-top: 1.25rem;
+  border-top: 0.5px solid var(--border);
+  font-size: 13px;
+  color: var(--text2);
+  line-height: 1.8;
+}
+
+p {
+  font-size: 15px;
+  line-height: 1.8;
+  color: var(--text2);
+  margin-bottom: 0.5rem;
+}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+
+  <div class="header">
+    <h1>LexiRead</h1>
+    <p>Read easy, read your way</p>
+  </div>
+
+  <div class="toolbar">
+    <button class="font-toggle" id="fontToggle" onclick="toggleFont()">Aa &nbsp; Dyslexic font: off</button>
+    <label for="sizeSlider">Size</label>
+    <input type="range" id="sizeSlider" min="13" max="22" value="16" step="1" oninput="setFontSize(this.value)">
+    <span class="size-label" id="sizeLabel">16px</span>
+    <label for="spacingSelect">Spacing</label>
+    <select id="spacingSelect" onchange="setSpacing(this.value)">
+      <option value="1.7">Normal</option>
+      <option value="2.1">Wide</option>
+      <option value="2.6">Extra wide</option>
+    </select>
+  </div>
+
+  <nav class="nav">
+    <button class="active" onclick="showSection('home', this)">Home</button>
+    <button onclick="showSection('features', this)">Features</button>
+    <button onclick="showSection('knowmore', this)">Know more</button>
+    <button onclick="showSection('contact', this)">Contact us</button>
+  </nav>
+
+  <!-- HOME -->
+  <div id="home" class="section active">
+    <div class="card">
+      <span class="badge">About LexiRead</span>
+      <p>LexiRead supports people with dyslexia by providing tools that make reading and writing more accessible. We believe everyone deserves resources to succeed, whether navigating school, work, or everyday life.</p>
+      <p>Our platform offers easy-to-use features, tips, and support that help you manage challenges and unlock your full potential. Together, we can turn challenges into opportunities.</p>
+    </div>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <strong>Dyslexic fonts</strong>
+        Specialized typography for improved readability and letter recognition.
+      </div>
+      <div class="feature-card">
+        <strong>Text to speech</strong>
+        Audio playback in multiple languages for auditory learners.
+      </div>
+      <div class="feature-card">
+        <strong>Image OCR</strong>
+        Extract text from photos using Gemini AI with EasyOCR fallback.
+      </div>
+      <div class="feature-card">
+        <strong>Customization</strong>
+        Adjust font size, line spacing, and reading mode to your comfort.
+      </div>
+    </div>
+  </div>
+
+  <!-- FEATURES -->
+  <div id="features" class="section">
+    <div class="feature-tabs">
+      <button class="active" onclick="showFeature('tts', this)">Text to speech</button>
+      <button onclick="showFeature('ocr', this)">Extract from image</button>
+      <button onclick="showFeature('format', this)">Friendly format</button>
+    </div>
+
+    <!-- TTS -->
+    <div id="feat-tts" class="card">
+      <p style="margin-bottom:0.75rem;">Type or paste text, then convert it to spoken audio.</p>
+      <textarea id="ttsText" placeholder="Enter your text here..."></textarea>
+      <div class="action-row">
+        <select class="lang-select" id="ttsLang">
+          <option value="en-US">English</option>
+          <option value="es-ES">Spanish</option>
+          <option value="fr-FR">French</option>
+          <option value="de-DE">German</option>
+          <option value="it-IT">Italian</option>
+          <option value="pt-BR">Portuguese</option>
+          <option value="hi-IN">Hindi</option>
+          <option value="ja-JP">Japanese</option>
+          <option value="ko-KR">Korean</option>
+          <option value="zh-CN">Chinese</option>
+        </select>
+        <button class="btn primary" onclick="speakText()">Speak text</button>
+        <button class="btn" onclick="stopSpeech()">Stop</button>
+      </div>
+      <div class="tts-player" id="ttsPlayer">
+        <span class="tts-label">Playing...</span>
+        <div class="waveform">
+          <div class="wave-bar" style="height:6px"></div>
+          <div class="wave-bar" style="height:14px"></div>
+          <div class="wave-bar" style="height:10px"></div>
+          <div class="wave-bar" style="height:20px"></div>
+          <div class="wave-bar" style="height:8px"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- OCR -->
+    <div id="feat-ocr" class="card" style="display:none;">
+      <p style="margin-bottom:0.75rem;">Upload an image and extract the text from it using Gemini AI (with EasyOCR fallback).</p>
+
+      <!-- Upload area with drag-and-drop -->
+      <div class="upload-area" id="uploadArea"
+           onclick="document.getElementById('imgInput').click()"
+           ondragover="handleDragOver(event)"
+           ondragleave="handleDragLeave(event)"
+           ondrop="handleDrop(event)">
+        <span class="upload-icon">🖼️</span>
+        Click to upload or drag &amp; drop an image here<br>
+        <span style="font-size:12px;margin-top:4px;display:inline-block;">JPG, PNG, WEBP supported</span>
+        <input type="file" id="imgInput" accept="image/*" style="display:none;" onchange="handleImageInput(this)">
+      </div>
+
+      <img id="imgPreview" class="img-preview" alt="Uploaded preview">
+
+      <!-- Status: loading / success / error -->
+      <div class="ocr-status" id="ocrStatus">
+        <div class="spinner" id="ocrSpinner"></div>
+        <span id="ocrStatusText">Extracting text...</span>
+      </div>
+
+      <div class="output-label" id="ocrLabel">Extracted text</div>
+      <div class="output-box" id="ocrOutput"></div>
+
+      <div id="ocrActions" style="display:none; margin-top:0.75rem;">
+        <div class="action-row">
+          <button class="btn primary" onclick="speakOCR()">🔊 Speak extracted text</button>
+          <button class="btn" onclick="copyOCR()">Copy text</button>
+          <button class="btn" onclick="sendToFormat()">Open in Friendly Format</button>
+          <button class="btn" onclick="resetOCR()">Clear</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- FORMAT -->
+    <div id="feat-format" class="card" style="display:none;">
+      <p style="margin-bottom:0.75rem;">Paste any text to reformat it with dyslexia-friendly settings.</p>
+      <textarea id="formatText" placeholder="Paste text to reformat..."></textarea>
+      <div class="action-row">
+        <button class="btn primary" onclick="applyFormat()">Apply formatting</button>
+        <button class="btn" onclick="clearFormat()">Clear</button>
+      </div>
+      <div class="output-label" id="formatLabel">Formatted text</div>
+      <div class="output-box" id="formatOutput"></div>
+    </div>
+  </div>
+
+  <!-- KNOW MORE -->
+  <div id="knowmore" class="section">
+    <div class="card">
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFAQ(this)">
+          What is dyslexia?
+          <span class="faq-arrow">&#9654;</span>
+        </div>
+        <div class="faq-a">Dyslexia is a specific learning disability that affects reading, spelling, and writing. It is characterized by difficulty in recognizing and decoding words, and is not related to intelligence or effort.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFAQ(this)">
+          What causes dyslexia?
+          <span class="faq-arrow">&#9654;</span>
+        </div>
+        <div class="faq-a">Dyslexia is believed to be caused by genetic and neurobiological factors. It affects how the brain processes written and spoken language, particularly in areas related to phonological awareness.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFAQ(this)">
+          Can dyslexia be treated?
+          <span class="faq-arrow">&#9654;</span>
+        </div>
+        <div class="faq-a">While there is no cure for dyslexia, individuals can receive specialized interventions and accommodations that help them manage the condition and succeed academically and professionally.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFAQ(this)">
+          How common is dyslexia?
+          <span class="faq-arrow">&#9654;</span>
+        </div>
+        <div class="faq-a">Dyslexia affects approximately 1 in 10 people worldwide, making it one of the most common learning disabilities. Early diagnosis and intervention can lead to significantly better outcomes.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFAQ(this)">
+          What are the strengths of dyslexic thinkers?
+          <span class="faq-arrow">&#9654;</span>
+        </div>
+        <div class="faq-a">Many dyslexic individuals show exceptional strengths in creative thinking, problem-solving, spatial reasoning, and big-picture thinking. Many artists, entrepreneurs, and scientists identify as dyslexic.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTACT -->
+  <div id="contact" class="section">
+    <div class="card">
+      <p style="margin-bottom:1rem;">Questions, feedback, or collaboration? Reach out to the LexiRead team.</p>
+      <div class="contact-row">
+        <div class="avatar">VS</div>
+        <div>
+          <div class="contact-name">Vansh Sharma</div>
+          <div class="contact-email">vanshsharma.73804@gmail.com</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <p>Disability? Nah, this is ability.</p>
+    <p>LexiRead - Empowering reading for everyone</p>
+  </footer>
+
+</div>
+
+<script>
+const BACKEND_URL = 'http://localhost:5000'; 
+
+let dyslexicOn = false;
+let ocrText = '';
+
+function toggleFont() {
+  dyslexicOn = !dyslexicOn;
+  const app = document.getElementById('app');
+  const btn = document.getElementById('fontToggle');
+  if (dyslexicOn) {
+    app.style.fontFamily = "'Lexend', sans-serif";
+    btn.classList.add('on');
+    btn.textContent = 'Aa   Dyslexic font: on';
+  } else {
+    app.style.fontFamily = '';
+    btn.classList.remove('on');
+    btn.textContent = 'Aa   Dyslexic font: off';
+  }
+}
+
+function setFontSize(v) {
+  document.getElementById('app').style.fontSize = v + 'px';
+  document.getElementById('sizeLabel').textContent = v + 'px';
+}
+
+function setSpacing(v) {
+  document.getElementById('app').style.lineHeight = v;
+}
+
+function showSection(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+
+function showFeature(id, btn) {
+  document.querySelectorAll('[id^="feat-"]').forEach(el => el.style.display = 'none');
+  document.querySelectorAll('.feature-tabs button').forEach(b => b.classList.remove('active'));
+  document.getElementById('feat-' + id).style.display = 'block';
+  btn.classList.add('active');
+}
+
+function toggleFAQ(el) {
+  el.closest('.faq-item').classList.toggle('open');
+}
+
+function speakText() {
+  const text = document.getElementById('ttsText').value.trim();
+  if (!text) return;
+  const lang = document.getElementById('ttsLang').value;
+  stopSpeech();
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang = lang;
+  utter.onend = () => document.getElementById('ttsPlayer').style.display = 'none';
+  window.speechSynthesis.speak(utter);
+  document.getElementById('ttsPlayer').style.display = 'flex';
+}
+
+function stopSpeech() {
+  window.speechSynthesis.cancel();
+  document.getElementById('ttsPlayer').style.display = 'none';
+}
+
+function handleDragOver(e) {
+  e.preventDefault();
+  document.getElementById('uploadArea').classList.add('dragover');
+}
+
+function handleDragLeave(e) {
+  document.getElementById('uploadArea').classList.remove('dragover');
+}
+
+function handleDrop(e) {
+  e.preventDefault();
+  document.getElementById('uploadArea').classList.remove('dragover');
+  const file = e.dataTransfer.files[0];
+  if (file && file.type.startsWith('image/')) {
+    processImageFile(file);
+  }
+}
+
+function handleImageInput(input) {
+  const file = input.files[0];
+  if (file) processImageFile(file);
+}
+
+
+function processImageFile(file) {
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const preview = document.getElementById('imgPreview');
+    preview.src = e.target.result;
+    preview.style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+
+ 
+  resetOCROutput();
+
+
+  uploadImageForOCR(file);
+}
+
+async function uploadImageForOCR(file) {
+  setOCRStatus('loading', 'Extracting text from image...');
+
+  const formData = new FormData();
+  formData.append('image', file);
+
+  try {
+    const response = await fetch(`${BACKEND_URL}/ocr`, {
+      method: 'POST',
+      body: formData
+    });
+
+    const data = await response.json();
+
+    if (!response.ok || data.error) {
+      throw new Error(data.error || `Server error ${response.status}`);
+    }
+
+    if (!data.text || data.text.trim() === '') {
+      setOCRStatus('error', 'No text found in this image.');
+      return;
+    }
+
+
+    ocrText = data.text;
+    const methodLabel = data.method === 'gemini' ? '✦ Gemini' : '⚙ EasyOCR';
+    setOCRStatus('success', `Text extracted successfully &nbsp;<span class="method-pill">${methodLabel}</span>`);
+    showOCROutput(ocrText);
+
+  } catch (err) {
+    console.error('OCR error:', err);
+    if (err.message.includes('Failed to fetch') || err.message.includes('NetworkError')) {
+      setOCRStatus('error', 'Cannot reach backend. Is the Python server running on port 5000?');
+    } else {
+      setOCRStatus('error', 'Error: ' + err.message);
+    }
+  }
+}
+
+function setOCRStatus(type, html) {
+  const el = document.getElementById('ocrStatus');
+  const spinner = document.getElementById('ocrSpinner');
+  const text = document.getElementById('ocrStatusText');
+
+  el.className = 'ocr-status ' + type;
+  spinner.style.display = type === 'loading' ? 'block' : 'none';
+  text.innerHTML = html;
+}
+
+function showOCROutput(text) {
+  const output = document.getElementById('ocrOutput');
+  const label = document.getElementById('ocrLabel');
+  const actions = document.getElementById('ocrActions');
+  output.textContent = text;
+  output.style.display = 'block';
+  label.style.display = 'block';
+  actions.style.display = 'block';
+}
+
+function resetOCROutput() {
+  ocrText = '';
+  document.getElementById('ocrOutput').style.display = 'none';
+  document.getElementById('ocrOutput').textContent = '';
+  document.getElementById('ocrLabel').style.display = 'none';
+  document.getElementById('ocrActions').style.display = 'none';
+  document.getElementById('ocrStatus').className = 'ocr-status';
+}
+
+function resetOCR() {
+  resetOCROutput();
+  document.getElementById('imgPreview').style.display = 'none';
+  document.getElementById('imgPreview').src = '';
+  document.getElementById('imgInput').value = '';
+}
+
+function speakOCR() {
+  if (!ocrText) return;
+  stopSpeech();
+  const utter = new SpeechSynthesisUtterance(ocrText);
+  utter.lang = 'en-US';
+  utter.onend = () => document.getElementById('ttsPlayer').style.display = 'none';
+  window.speechSynthesis.speak(utter);
+  document.getElementById('ttsPlayer').style.display = 'flex';
+}
+
+function copyOCR() {
+  if (!ocrText) return;
+  navigator.clipboard.writeText(ocrText).then(() => {
+    const btn = event.target;
+    btn.textContent = 'Copied!';
+    setTimeout(() => btn.textContent = 'Copy text', 1500);
+  });
+}
+
+
+function sendToFormat() {
+  if (!ocrText) return;
+  document.getElementById('formatText').value = ocrText;
+  // Switch to the format tab
+  const formatBtn = document.querySelector('.feature-tabs button:nth-child(3)');
+  showFeature('format', formatBtn);
+  applyFormat();
+}
+
+
+function applyFormat() {
+  const text = document.getElementById('formatText').value.trim();
+  if (!text) return;
+  const output = document.getElementById('formatOutput');
+  const label = document.getElementById('formatLabel');
+  output.style.display = 'block';
+  label.style.display = 'block';
+  output.style.fontFamily = "'Lexend', sans-serif";
+  output.style.letterSpacing = '0.05em';
+  output.style.wordSpacing = '0.12em';
+  output.style.lineHeight = '2.1';
+  output.textContent = text;
+}
+
+function clearFormat() {
+  document.getElementById('formatText').value = '';
+  document.getElementById('formatOutput').style.display = 'none';
+  document.getElementById('formatLabel').style.display = 'none';
+}
+</script>
+</body>
+</html>
