@@ -1,17 +1,3 @@
-"""
-LexiRead OCR Backend
---------------------
-Uses Gemini Vision first, falls back to EasyOCR if Gemini fails or is unavailable.
-
-Setup:
-    pip install flask flask-cors google-generativeai easyocr pillow
-
-Run:
-    GEMINI_API_KEY=your_key_here python backend.py
-
-The server runs on http://localhost:5000
-"""
-
 import os
 import io
 import base64
@@ -27,9 +13,7 @@ GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "")
 
 
 def ocr_with_gemini(image_bytes: bytes) -> str:
-    """Extract text from image bytes using Gemini Vision."""
     import google.generativeai as genai
-
     if not GEMINI_API_KEY:
         raise ValueError("GEMINI_API_KEY environment variable is not set.")
 
@@ -70,17 +54,6 @@ def ocr_with_easyocr(image_bytes: bytes) -> str:
 
 @app.route("/ocr", methods=["POST"])
 def ocr():
-    """
-    Accepts either:
-      - multipart/form-data with field 'image' (file upload)
-      - application/json with field 'image' (base64-encoded string)
-
-    Returns JSON:
-      { "text": "...", "method": "gemini" | "easyocr", "error": null }
-    on success, or:
-      { "text": "", "method": null, "error": "..." }
-    on failure.
-    """
 
     image_bytes = None
 
